@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import PermissionDenied
-from ..posts.models import Group, Post
 from .serializers import GroupSerializer, PostSerializer, CommentSerializer
+from posts.models import Group, Post
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -19,13 +19,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
+            raise PermissionDenied('Несанкционированный доступ')
         super(PostViewSet, self).perform_update(serializer)
 
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
-        instance.delete()
+    def perform_destroy(self, serializer):
+        if serializer.author != self.request.user:
+            raise PermissionDenied('Несанкционированный доступ')
+        serializer.delete()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -44,10 +44,10 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
+            raise PermissionDenied('Несанкционированный доступ')
         super(CommentViewSet, self).perform_update(serializer)
 
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
-        instance.delete()
+    def perform_destroy(self, serializer):
+        if serializer.author != self.request.user:
+            raise PermissionDenied('Несанкционированный доступ')
+        serializer.delete()
